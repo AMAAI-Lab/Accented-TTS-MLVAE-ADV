@@ -1,4 +1,619 @@
+
 <!DOCTYPE html>
-<h1>
-    TBD
-</h1>
+<html lang="en">
+
+<head>
+
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BVMESHE6ZC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BVMESHE6ZC');
+</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+  <title>Accent Conversion in Text-To-Speech Using Multi-Level VAE and Adversarial Training</title>
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .mono {
+      font-family: 'Roboto Mono', monospace;
+    }
+  </style>
+
+</head>
+
+<body rightmargin="150" leftmargin="150" topmargin="100" bottommargin="100" line-height:160%>
+  <font size="4">
+
+    <div class="container">
+
+      <header role="banner">
+
+      </header>
+      <main role="main">
+        <article itemscope itemtype="https://schema.org/BlogPosting">
+          <br></br>
+          <h1 itemprop="headline" align="center">
+            <font color="000093" size="7">Accent Conversion in Text-To-Speech Using Multi-Level VAE and Adversarial Training</br>
+            </font>
+          </h1>
+          <br></br>
+          <section itemprop="entry-text">
+            <br>
+            <h2 id="abstract">
+              <font color="000093">Abstract</font>
+            </h2>
+            <p style="text-align: justify;">
+                With rapid globalization, the need to build inclusive and representative speech technology cannot be overstated. Accent is an important aspect of speech that needs to be taken into consideration while building inclusive speech synthesizers.
+Inclusive speech technology aims to erase any biases towards specific groups, such as people of certain accent. We note that state-of-the-art Text-to-Speech (TTS) systems may currently not be suitable for all people, regardless of their background, as they are designed to generate high-quality voices without focusing on accent.
+In this paper, we propose a TTS model that utilizes a Multi-Level Variational Autoencoder with adversarial learning to address accented speech synthesis and conversion in TTS, with a vision for more inclusive systems in the future. We evaluate the performance through both objective metrics and subjective listening tests. The results show an improvement in accent conversion ability compared to the baseline.              <font color="061E61"> 
+              </p>
+</section>
+
+<br>
+
+            <h2><font color="061E61">Non-converted audio samples from the listening test:</font>
+</h2>
+
+Below are audio samples for the MOS voice quality comparison from the paper. These samples are non-converted (no accent change). 
+
+
+<table class="table" align="center" style="table-layout: fixed;word-break:break-word">
+    <thead>
+      <tr>
+        <th>Ground Truth</th>
+        <th>GST</th>
+        <th>MLVAE</th>
+        <th>MLVAE-ADV</th>        
+        
+      </tr>
+
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="4"  class="mono">ABA (Arabic): And you always want to see it in the superlative degree.
+      </td>
+  </tr>
+  <tr>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GT/ABA_arctic_a0007.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GST/ABA_Arabic_And you always want to see it in the superlative degree.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEbaseline/ABA_Arabic_And you always want to see it in the superlative degree.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEadv128k/ABA_Arabic_And you always want to see it in the superlative degree.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+      </tr>
+  
+      <tr>
+        <td colspan="4"  class="mono">EBVS (Spanish): What was the object of your little sensation.
+      </td>
+  </tr>
+  <tr>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GT/EBVS_arctic_a0071.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GST/EBVS_Spanish_What was the object of your little sensation.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEbaseline/EBVS_Spanish_What was the object of your little sensation.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEadv128k/EBVS_Spanish_What was the object of your little sensation.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="4"  class="mono">HKK (Korean): I came for information more out of curiosity than anything else.
+      </td>
+  </tr>
+  <tr>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GT/HKK_arctic_a0058.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GST/HKK_Korean_I came for information more out of curiosity than anything else.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEbaseline/HKK_Korean_I came for information more out of curiosity than anything else.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEadv128k/HKK_Korean_I came for information more out of curiosity than anything else.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="4"  class="mono">NCC (Chinese): I will go over tomorrow afternoon.
+      </td>
+  </tr>
+  <tr>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GT/NCC_arctic_a0390.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GST/NCC_Chinese_I will go over tomorrow afternoon.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEbaseline/NCC_Chinese_I will go over tomorrow afternoon.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEadv128k/NCC_Chinese_I will go over tomorrow afternoon.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+      </tr>
+  
+      <tr>
+        <td colspan="4"  class="mono">SLT (American): Will we ever forget it.
+      </td>
+  </tr>
+  <tr>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GT/SLT_arctic_a0005.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GST/SLT_American_Will we ever forget it.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEbaseline/SLT_American_Will we ever forget it.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEadv128k/SLT_American_Will we ever forget it.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="4"  class="mono">SVBI (Hindi): He will knock you off a few sticks in no time.
+      </td>
+  </tr>
+  <tr>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GT/SVBI_arctic_a0334.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GST/SVBI_Hindi_He will knock you off a few sticks in no time.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEbaseline/SVBI_Hindi_He will knock you off a few sticks in no time.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEadv128k/SVBI_Hindi_He will knock you off a few sticks in no time.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+      </tr>
+
+      <tr>
+        <td colspan="4"  class="mono">THV (Vietnamese): For the twentieth time that evening the two men shook hands.
+      </td>
+  </tr>
+  <tr>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GT/THV_arctic_a0003.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+    <td>
+      <audio controls="controls" style="width: 240px;"">
+        <source src="samples/MOStest/GST/THV_Vietnamese_For the twentieth time that evening the two men shook hands.wav" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+    </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEbaseline/THV_Vietnamese_For the twentieth time that evening the two men shook hands.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/MOStest/MLVAEadv128k/THV_Vietnamese_For the twentieth time that evening the two men shook hands.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+      </tr>
+  
+  
+  
+    </tbody>
+  </table>
+
+
+
+  <h2><font color="061E61">Accent-converted audio samples from the listening test:</font>
+  </h2>
+
+  Below are audio samples for the speaker and accent similarity evaluation from the paper. These samples are accent-converted. 
+
+
+  <table class="table" align="center" style="table-layout: fixed;word-break:break-word">
+      <thead>
+        <tr>
+          <th>Original Speaker</th>
+          <th>New Accent Reference</th>
+          <th>MLVAE</th>
+          <th>MLVAE-ADV</th>        
+          
+        </tr>
+  
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4"  class="mono">ABA (Arabic) into Vietnamese: I came for information more out of curiosity than anything else.
+        </td>
+    </tr>
+    <tr>
+      <td>
+        <audio controls="controls" style="width: 240px;"">
+          <source src="samples/acctest-128k/speaker_reference/ABA_arctic_a0058.wav" type="audio/wav">
+          Your browser does not support the audio element.
+        </audio>
+      </td>
+      <td>
+        <audio controls="controls" style="width: 240px;"">
+          <source src="samples/acctest-128k/accent_reference/ABA_Viet_HQTV_arctic_a0058.wav" type="audio/wav">
+          Your browser does not support the audio element.
+        </audio>
+      </td>
+          <td>
+            <audio controls="controls" style="width: 240px;"">
+              <source src="samples/acctest-128k/MLVAEbaseline/ABA_Vietnamese_I came for information more out of curiosity than anything else.wav" type="audio/wav">
+              Your browser does not support the audio element.
+            </audio>
+          </td>
+  
+          <td>
+            <audio controls="controls" style="width: 240px;"">
+              <source src="samples/acctest-128k/MLVAEadv/ABA_Vietnamese_I came for information more out of curiosity than anything else.wav" type="audio/wav">
+              Your browser does not support the audio element.
+            </audio>
+          </td>
+        </tr>
+
+
+
+        <tr>
+            <td colspan="4"  class="mono">EBVS (Spanish) into Korean: What was the object of your little sensation.
+          </td>
+      </tr>
+      <tr>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/speaker_reference/EBVS_arctic_a0071.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/accent_reference/EBVS_Kor_HKK_arctic_a0071.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEbaseline/EBVS_Korean_What was the object of your little sensation.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+    
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEadv/EBVS_Korean_What was the object of your little sensation.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+          </tr>        
+          
+          
+          <tr>
+          <td colspan="4"  class="mono">HKK (Korean) into Arabic: But what they want with your toothbrush is more than I can imagine.
+        </td>
+    </tr>
+    <tr>
+      <td>
+        <audio controls="controls" style="width: 240px;"">
+          <source src="samples/acctest-128k/speaker_reference/HKK_arctic_a0285.wav" type="audio/wav">
+          Your browser does not support the audio element.
+        </audio>
+      </td>
+      <td>
+        <audio controls="controls" style="width: 240px;"">
+          <source src="samples/acctest-128k/accent_reference/HKK_Arabic_ABA_arctic_a0285.wav" type="audio/wav">
+          Your browser does not support the audio element.
+        </audio>
+      </td>
+          <td>
+            <audio controls="controls" style="width: 240px;"">
+              <source src="samples/acctest-128k/MLVAEbaseline/HKK_Arabic_But what they want with your toothbrush is more than I can imagine.wav" type="audio/wav">
+              Your browser does not support the audio element.
+            </audio>
+          </td>
+  
+          <td>
+            <audio controls="controls" style="width: 240px;"">
+              <source src="samples/acctest-128k/MLVAEadv/HKK_Arabic_But what they want with your toothbrush is more than I can imagine.wav" type="audio/wav">
+              Your browser does not support the audio element.
+            </audio>
+          </td>
+        </tr>
+
+
+        <tr>
+            <td colspan="4"  class="mono">NCC (Chinese) into American: I graduated last of my class.
+          </td>
+      </tr>
+      <tr>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/speaker_reference/NCC_arctic_a0304.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/accent_reference/NCC_Ame_CLB_arctic_a0304.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEbaseline/NCC_American_I graduated last of my class.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+    
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEadv/NCC_American_I graduated last of my class.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+          </tr>
+
+
+          <tr>
+            <td colspan="4"  class="mono">SLT (American) into Chinese: But what they want with your toothbrush is more than I can imagine.
+          </td>
+      </tr>
+      <tr>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/speaker_reference/SLT_arctic_a0285.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/accent_reference/SLT_Chi_LXC_arctic_a0285.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEbaseline/SLT_Chinese_But what they want with your toothbrush is more than I can imagine.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+    
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEadv/SLT_Chinese_But what they want with your toothbrush is more than I can imagine.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+          </tr>
+
+
+          <tr>
+            <td colspan="4"  class="mono">SVBI (Hindi) into Spanish: I will go over tomorrow afternoon.
+          </td>
+      </tr>
+      <tr>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/speaker_reference/SVBI_Iwillgo_arctic_a0390.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/accent_reference/SVBI_Spa_NJS_arctic_a0390.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEbaseline/SVBI_Spanish_I will go over tomorrow afternoon.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+    
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEadv/SVBI_Spanish_I will go over tomorrow afternoon.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+          </tr>
+    
+          <tr>
+            <td colspan="4"  class="mono">THV (Vietnamese) into Hindi: He will knock you off a few sticks in no time.
+          </td>
+      </tr>
+      <tr>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/speaker_reference/THV_arctic_a0334.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+        <td>
+          <audio controls="controls" style="width: 240px;"">
+            <source src="samples/acctest-128k/accent_reference/THV_Hindi_TNI_arctic_a0334.wav" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEbaseline/THV_Hindi_He will knock you off a few sticks in no time.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+    
+            <td>
+              <audio controls="controls" style="width: 240px;"">
+                <source src="samples/acctest-128k/MLVAEadv/THV_Hindi_He will knock you off a few sticks in no time.wav" type="audio/wav">
+                Your browser does not support the audio element.
+              </audio>
+            </td>
+          </tr>
+
+
+    
+      </tbody>
+    </table>
+  
+
+
+
+
+
+
+
+</br>
+
+<br>
+
+          </section>
+        </article>
+      </main>
+
+    </div>
+
+    <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+         HTML: ["input/TeX","output/HTML-CSS"],
+         TeX: {
+                Macros: {
+                         bm: ["\\boldsymbol{#1}", 1],
+                         argmax: ["\\mathop{\\rm arg\\,max}\\limits"],
+                         argmin: ["\\mathop{\\rm arg\\,min}\\limits"]},
+                extensions: ["AMSmath.js","AMSsymbols.js"],
+                equationNumbers: { autoNumber: "AMS" } },
+         extensions: ["tex2jax.js"],
+         jax: ["input/TeX","output/HTML-CSS"],
+         tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+         "HTML-CSS": { availableFonts: ["TeX"],
+                       linebreaks: { automatic: true } }
+     });
+ </script>
+
+    <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       tex2jax: {
+         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+       }
+     });
+ </script>
+
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+      </script>
+
+
+</body>
+
+</html>
