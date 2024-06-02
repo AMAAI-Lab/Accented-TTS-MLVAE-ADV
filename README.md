@@ -1,1 +1,2 @@
-# Accented Text-to-Speech with ML-VAE, Tacotron2, and adversarial learning
+# Accent Conversion in Text-To-Speech Using Multi-Level VAE and Adversarial Training
+This repo combines a Tacotron2 model with a ML-VAE and adversarial learning to target accent conversion in TTS settings (pick a speaker A with and assign them accent B).
