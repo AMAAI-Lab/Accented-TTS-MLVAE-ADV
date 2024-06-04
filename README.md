@@ -5,6 +5,9 @@ Paper link: TBA
 
 Samples link: https://amaai-lab.github.io/Accented-TTS-MLVAE-ADV/
 
+
+![alt text](https://github.com/AMAAI-Lab/Accented-TTS-MLVAE-ADV/blob/main/schematic.png?raw=true)
+
 ## Training
 First preprocess your data into mel spectrogram `.npy` arrays with the `preprocess.py script`. We used L2CMU in this paper, which stands for a combination of L2Arctic (24 speakers) and CMUArctic (4 speakers). Then run ``CUDA_VISIBLE_DEVICES=X python train.py --dataset L2CMU``
 
