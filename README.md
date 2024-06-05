@@ -5,7 +5,7 @@ Paper link: https://arxiv.org/abs/2406.01018
 
 Samples link: https://amaai-lab.github.io/Accented-TTS-MLVAE-ADV/
 
-![alt text](https://github.com/AMAAI-Lab/Accented-TTS-MLVAE-ADV/blob/main/schematic.png?raw=true)
+![alt text](https://github.com/AMAAI-Lab/Accented-TTS-MLVAE-ADV/blob/main/schematic.png)
 
 This code is built upon Comprehensive-TTS: https://github.com/keonlee9420/Comprehensive-Transformer-TTS
 
